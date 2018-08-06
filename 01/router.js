@@ -1,17 +1,25 @@
 const urlParser = require('url');
+const handlers = require('./handlers');
 
- class Router {
-  constructor() {
-  }
+class Router {
+  constructor() {}
 
   parseUrl(url) {
-      return urlParser.parse(url, true);
+    return urlParser.parse(url, true);
   }
 
-  handler(req) {
+  handler(req, res) {
     const url = this.parseUrl(req.url);
-    console.log(url.pathname);
-    
+    const path = url.pathname.replace('/', '');
+    const handler = handlers[path];
+
+    if (handler) return handler;
+
+    // console.log(handlers[path]);
+
+    // const handler = handlers[path][method];
+
+    // return handler;
   }
 };
 
