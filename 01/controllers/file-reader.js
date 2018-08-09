@@ -1,12 +1,15 @@
 const fs = require('fs');
 const path = require('path');
-exports.read = (filePath, cb) =>    {
-   
-    
-    fs.readFile(path.join(__dirname, '..', 'public', 'index.html'), (err, data)=>{
-        if (err) throw err;
-       
-        cb(data);
-        
-    });
+const { promisify } = require('util');
+const readFile = promisify(fs.readFile);
+exports.read = async (filePath, cb) => {
+  try {
+    const data = await readFile(
+      path.join(__dirname, '..', 'public', 'index.html')
+    );
+
+    return data;
+  } catch (error) {
+    console.log('Error', error);
+  }
 };
