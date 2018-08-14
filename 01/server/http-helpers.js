@@ -7,24 +7,28 @@ var headers = {
 };
 
 exports.prepareResponse = (req, cb) => {
-    let data = '';
-    req.on('data', (chunk)=> {data+=chank});
-    req.on('end', ()=>{cb(data)});
+  let data = '';
+  req.on('data', chunk => {
+    data += chunk;
+  });
+  req.on('end', () => {
+    cb(data);
+  });
 };
 
 exports.respond = (res, data, status) => {
-    status = status || 200;
-    res.writeHead(status, headers);
-    
-    res.end(data);
-}
+  status = status || 200;
+  res.writeHead(status, headers);
 
-exports.send404 = (res, loc, status) =>{
-    exports.respond(res, 'Not Found', 404)
-}
+  res.end(data);
+};
+
+exports.send404 = (res, loc, status) => {
+  exports.respond(res, 'Not Found', 404);
+};
 
 exports.redirector = function(res, loc, status) {
-    status = status || 302;
-    res.writeHead(status, { Location: loc });
-    res.end();
-  };
+  status = status || 302;
+  res.writeHead(status, { Location: loc });
+  res.end();
+};

@@ -5,38 +5,62 @@ const utils = require('./http-helpers');
 const fileCtrl = require('../controllers/file-reader');
 
 const endpoints = {
-  '/index.html': async () => {
-    try {
-      const data = await fileCtrl.read();
-      return data;
-    } catch (error) {
-      console.log(error);
-    }
+  '/index.html': cb => {
+    fileCtrl.read('public/index.html', (err, data) => {
+      cb(err, data);
+    });
+  },
+  '/file': (req, cb) => {
+    // const form = new formidable.IncomingForm();
+    // form.parse(req, (err, fields, files) => {
+    //   if (err) {
+    //     return cb(err, null);
+    //   }
+    //   console.log('fields!!!!!!', fields);
+    //   console.log('files!!!!!!', files);
+    // });
+
+    cb(null, 123);
   }
 };
-
+function urlParser(urlForParse) {
+  const parsedUrl = url.parse(urlForParse);
+  return parsedUrl.pathname === '/' ? '/index.html' : parsedUrl.pathname;
+}
 const actions = {
-  GET: async (req, res) => {
-    var parsedUrl = url.parse(req.url);
-    var endPoint =
-      parsedUrl.pathname === '/' ? '/index.html' : parsedUrl.pathname;
+  GET: (req, res) => {
+    const endPoint = urlParser(req.url);
 
     if (!endpoints[endPoint]) return utils.send404(res);
-    try {
-      const data = await endpoints[endPoint]();
-      utils.respond(res, data, 200);
-    } catch (error) {}
+
+    endpoints[endPoint]((err, data) => {
+      if (err) {
+        utils.respond(res, err.toString(), 500);
+      }
+      {
+        utils.respond(res, data, 200);
+      }
+    });
   },
   POST: (req, res) => {
+    const endPoint = urlParser(req.url);
+
+    if (!endpoints[endPoint]) return utils.send404(res);
+
+    endpoints[endPoint](req, (err, data) => {
+      if (err) {
+        utils.respond(res, err.toString(), 500);
+      } else {
+        console.log(data);
+      }
+    });
+
     utils.prepareResponse(req, data => {
-      // Do something with the data that was just collected by the helper
-      // e.g., validate and save to db
-      // either redirect or respond
-      // should be based on result of the operation performed in response to the POST request intent
-      // e.g., if user wants to save, and save fails, throw error
-      utils.redirector(
-        res /* redirect path , optional status code -  defaults to 302 */
-      );
+      console.log(data);
+      res.end('200');
+      // utils.redirector(
+      //   res /* redirect path , optional status code -  defaults to 302 */
+      // );
     });
   },
   DELETE: (req, res) => {}
