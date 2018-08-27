@@ -11,18 +11,10 @@ const endpoints = {
     });
   },
   '/file': (req, cb) => {
-    // const form = new formidable.IncomingForm();
-    // form.parse(req, (err, fields, files) => {
-    //   if (err) {
-    //     return cb(err, null);
-    //   }
-    //   console.log('fields!!!!!!', fields);
-    //   console.log('files!!!!!!', files);
-    // });
-
-    cb(null, 123);
+    cb(null, req.data);
   }
 };
+
 function urlParser(urlForParse) {
   const parsedUrl = url.parse(urlForParse);
   return parsedUrl.pathname === '/' ? '/index.html' : parsedUrl.pathname;
@@ -36,8 +28,7 @@ const actions = {
     endpoints[endPoint]((err, data) => {
       if (err) {
         utils.respond(res, err.toString(), 500);
-      }
-      {
+      } {
         utils.respond(res, data, 200);
       }
     });
@@ -51,6 +42,7 @@ const actions = {
       if (err) {
         utils.respond(res, err.toString(), 500);
       } else {
+        utils.respond(res, 'Ok', 200);
         console.log(data);
       }
     });
