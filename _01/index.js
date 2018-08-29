@@ -25,24 +25,43 @@ function handlerRequest(req, res) {
       break;
     case '/file':
       if (req.method === 'POST') {
-        
-        if(req.headers['content-length'] > 1048576) {
-            res.statusCode = 401;
-            res.end('File bigger than 1mb');
+        if (req.headers['content-length'] > 1048576) {
+          res.statusCode = 413;
+          const error = new Error('File bigger than 1mb');
+          res.end(error.toString());
         }
-        let body = '';
-        req.on('data', data =>{
-            body += data;
+        fs.readFile(`${__dirname}/files/file`, (err, data) => {
+          if (err) {
+            let body = '';
+            req.on('data', data => {
+              body += data;
+            });
+            req.on('end', () => {
+              const post = querystring.parse(body);
+              fs.writeFile(`${__dirname}/files/file`, body, (err, data) => {
+                if (err) {
+                  res.statusCode = 500;
+                  const error = new Error('Error loading file');
+                  res.end(error.toString());
+                } else {
+                  res.statusCode = 200;
+                  res.end('File uploaded successfully');
+                }
+              });
+            });
+          } else {
+            res.statusCode = 409;
+            const error = new Error('File already exists');
+            res.end(error.toString());
+          }
         });
-        req.on('end', () =>{
-           
-            const post = querystring.parse(body);
-            console.log(req.headers);
-            //fs.writeFile(`${__dirname}/files/`,)
-            res.end('file');
-        });
-      }
+      } 
 
+      if (req.method === 'DELETE') {
+        console.log(req.url);
+        
+        res.end('213')
+      }
       break;
 
     default:

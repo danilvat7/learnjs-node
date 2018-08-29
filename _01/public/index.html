@@ -20,7 +20,7 @@
 
     <form id="DELETE">
         <input type="text"
-               name="file"
+               name="delete"
                placeholder="filename.ext">
         <input type="submit"
                value="Удалить">
@@ -34,27 +34,38 @@
                value="Загрузить">
     </form>
     <script>
-        document.addEventListener('submit',(ev) => {
+        document.addEventListener('submit', (ev) => {
             ev.preventDefault();
             const form = ev.target;
-            if(!form.file.value) return;
             let data = new FormData();
-            data.append('file', form.file.files[0]);
-            const xhr = new XMLHttpRequest();
+            if (form.file) {
+                if (!form.file.value) return;
 
+                data.append('file', form.file.files[0]);
+            }
+
+            const xhr = new XMLHttpRequest();
             switch (form.id) {
                 case 'POST':
                     xhr.open('POST', 'http://localhost:3300/file')
-                    xhr.setRequestHeader("Content-type","multipart/form-data");
-                    xhr.onload = () => console.log(JSON.parse(request.responseText));
+                    xhr.setRequestHeader("Content-type", "multipart/form-data");
+                    xhr.onload = (request) => console.log(request);
                     xhr.send(data);
                     break;
-            
+                case 'DELETE':
+                    const value = form.delete.value;
+
+                    xhr.open('DELETE', `http://localhost:3300/file?file=${value}`)
+                    xhr.setRequestHeader("Content-type", "multipart/form-data");
+                    xhr.onload = (request) => console.log(request);
+                    xhr.send();
+                    break;
+
                 default:
                     break;
             }
-            
-        } );
+
+        });
     </script>
 </body>
 
