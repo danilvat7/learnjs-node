@@ -46,7 +46,7 @@
                 case 'POST':
                     xhr.open('POST', 'http://localhost:8080/file')
                     xhr.setRequestHeader("Content-type","multipart/form-data");
-                    xhr.onload = () => console.log(JSON.parse(request.responseText));
+                    xhr.onload = (request) => console.log(request);
                     xhr.send(data);
                     break;
             
