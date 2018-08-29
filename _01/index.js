@@ -3,15 +3,8 @@ const http = require('http');
 const server = http.createServer(handlerRequest);
 const url = require('url');
 const fs = require('fs');
-const querystring = require('querystring');
 
 server.listen(3300);
-
-const routes = {
-  '/': (req, res) => {
-    return res.end('qwe');
-  }
-};
 
 function handlerRequest(req, res) {
   const pathname = decodeURI(url.parse(req.url).pathname);
@@ -37,7 +30,6 @@ function handlerRequest(req, res) {
               body += data;
             });
             req.on('end', () => {
-              const post = querystring.parse(body);
               fs.writeFile(`${__dirname}/files/file`, body, (err, data) => {
                 if (err) {
                   res.statusCode = 500;
@@ -52,15 +44,33 @@ function handlerRequest(req, res) {
           } else {
             res.statusCode = 409;
             const error = new Error('File already exists');
+
             res.end(error.toString());
           }
         });
-      } 
+      }
 
       if (req.method === 'DELETE') {
-        console.log(req.url);
-        
-        res.end('213')
+        const queryParam = url.parse(req.url).query.split('=')[1];
+        fs.readFile(`${__dirname}/files/${queryParam}`, (err, data) => {
+          if (err) {
+            res.statusCode = 404;
+            const error = new Error('File not found.');
+            res.end(error.toString());
+          } else {
+            fs.unlink(`${__dirname}/files/${queryParam}`, (err) => {
+              if (err) {
+                res.statusCode = 500;
+                const error = new Error('Error delete file');
+                res.end(error.toString());
+              } else {
+                res.statusCode = 200;
+                res.end('File deleted successfully.');
+              }
+            });
+
+          }
+        });
       }
       break;
 
