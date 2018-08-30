@@ -21,15 +21,15 @@
     <form id="DELETE">
         <input type="text"
                name="delete"
-               placeholder="filename.ext">
+               placeholder="filename">
         <input type="submit"
                value="Удалить">
     </form>
 
     <form id="GET">
         <input type="text"
-               name="file"
-               placeholder="filename.ext">
+               name="get"
+               placeholder="filename">
         <input type="submit"
                value="Загрузить">
     </form>
@@ -53,15 +53,14 @@
                     xhr.send(data);
                     break;
                 case 'DELETE':
-                    const value = form.delete.value;
-
-                    xhr.open('DELETE', `http://localhost:3300/file?file=${value}`)
-                    xhr.setRequestHeader("Content-type", "multipart/form-data");
+                    xhr.open('DELETE', `http://localhost:3300/file?file=${form.delete.value}`)
                     xhr.onload = (request) => console.log(request);
                     xhr.send();
                     break;
-
-                default:
+                case 'GET':
+                    xhr.open('GET', `http://localhost:3300/file?file=${form.get.value}`)
+                    xhr.onload = (request) => console.log(request);
+                    xhr.send();
                     break;
             }
 
