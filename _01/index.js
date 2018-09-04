@@ -83,32 +83,16 @@ function handlerRequest(req, res) {
             const stream = fs.createReadStream(
               `${__dirname}/files/${queryParam}`
             );
-            // let data;
-            // stream.on('data', () => {
-            //   data = stream.read();
-            // });
-            // stream.on('end', () => {
-            //   console.log('End!!!', data);
-            //   res.end(data)
-            // });
-
-            // stream.on('error', err => {
-            //   console.log('Error!!!',err);
-
-            //   res.statusCode = 500;
-            //   const error = new Error('Error donwload file');
-            //   res.end(error.toString());
-            // });
             let data = '';
-            stream.on('data', (chunk)=>{
-              data +=chunk
+            res.setHeader('Content-disposition', 'attachment; filename='+'file.txt');
+            res.setHeader('Content-Type', '**');
+            stream.pipe(res);
+
+            stream.on('error',(err)=>{
+              res.statusCode = 500;
+                const error = new Error('Error donwload file');
+                res.end(error.toString());
               
-            }).on('end',()=>{
-              console.log('END');
-              res.setHeader('Content-disposition', 'attachment; filename='+'file.txt');
-              //res.setHeader('Content-Type', 'application/octet-stream');
-              // res.setHeader('Content-Type', 'text/plain')
-              res.end(data);
             });
           }
         });
