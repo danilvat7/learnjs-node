@@ -84,8 +84,8 @@ function handlerRequest(req, res) {
               `${__dirname}/files/${queryParam}`
             );
             let data = '';
-            res.setHeader('Content-disposition', 'attachment; filename='+'file.txt');
-            res.setHeader('Content-Type', '**');
+            // res.setHeader('Content-disposition', 'attachment; filename='+'file.txt');
+            res.setHeader('Content-Type', 'application/octet-stream');
             stream.pipe(res);
 
             stream.on('error',(err)=>{
@@ -93,6 +93,10 @@ function handlerRequest(req, res) {
                 const error = new Error('Error donwload file');
                 res.end(error.toString());
               
+            });
+
+            res.on('close', ()=>{
+              stream.destroy();
             });
           }
         });
