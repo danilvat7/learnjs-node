@@ -2,8 +2,11 @@ const Router = require('koa-router');
 
 const router = new Router();
 
-router.get('/', async (ctx, next) => {
-    await ctx.render('index');
-});
+const Ctr = require('./../conroller');
 
-module.exports = router;
+router.get('/', Ctr.renderIndex);
+router.get('/subscribe', Ctr.subscribe);
+router.post('/publish', Ctr.publish);
+
+
+module.exports = router; 
