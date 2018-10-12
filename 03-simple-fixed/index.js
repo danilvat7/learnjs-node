@@ -23,8 +23,9 @@ const server = http.createServer(function(req, res) {
       // console.log("subscribe - close");
       clients.splice(clients.indexOf(res), 1);
     });
-
+    
     clients.push(res);
+   
     break;
 
   case 'POST /publish':
@@ -66,6 +67,7 @@ const server = http.createServer(function(req, res) {
         // чтобы в процессе этого цикла добавились новые соединения или закрылись текущие
         clients.forEach(function(res) {
           res.setHeader('Cache-Control', "no-cache, no-store, private");
+         
           res.end(body.message);
         });
 
@@ -87,7 +89,7 @@ const server = http.createServer(function(req, res) {
 // for tests if needed
 server._clients = clients;
 
-server.listen(3000);
+server.listen(3300);
 
 module.exports = server;
 
